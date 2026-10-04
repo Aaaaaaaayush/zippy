@@ -1,0 +1,280 @@
+    <!-- Zippy: door sills + furniture at real heights (from make_zippy_map.py) -->
+    <model name="zippy_sill_bedroom_a">
+      <static>true</static>
+      <pose>-10.000 1.400 0.0025 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.800 0.150 0.005</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.800 0.150 0.005</size></box></geometry>
+          <material><ambient>0.8 0.6 0.2 1</ambient><diffuse>0.8 0.6 0.2 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_sill_guest_room">
+      <static>true</static>
+      <pose>-7.700 1.400 0.0025 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.800 0.150 0.005</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.800 0.150 0.005</size></box></geometry>
+          <material><ambient>0.8 0.6 0.2 1</ambient><diffuse>0.8 0.6 0.2 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_sill_bedroom_b">
+      <static>true</static>
+      <pose>-9.500 3.400 0.0025 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.800 0.150 0.005</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.800 0.150 0.005</size></box></geometry>
+          <material><ambient>0.8 0.6 0.2 1</ambient><diffuse>0.8 0.6 0.2 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_sill_kitchen">
+      <static>true</static>
+      <pose>-0.100 1.400 0.0025 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.800 0.150 0.005</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.800 0.150 0.005</size></box></geometry>
+          <material><ambient>0.8 0.6 0.2 1</ambient><diffuse>0.8 0.6 0.2 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_sill_bedroom_c">
+      <static>true</static>
+      <pose>3.950 1.350 0.0025 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.800 0.150 0.005</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.800 0.150 0.005</size></box></geometry>
+          <material><ambient>0.8 0.6 0.2 1</ambient><diffuse>0.8 0.6 0.2 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_sill_bedroom_d">
+      <static>true</static>
+      <pose>3.950 2.950 0.0025 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.800 0.150 0.005</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.800 0.150 0.005</size></box></geometry>
+          <material><ambient>0.8 0.6 0.2 1</ambient><diffuse>0.8 0.6 0.2 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_bed_a">
+      <static>true</static>
+      <pose>-11.200 -0.825 0.2500 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>2.100 2.150 0.500</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>2.100 2.150 0.500</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_cupboard_a">
+      <static>true</static>
+      <pose>-9.315 -0.300 1.0000 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.470 3.200 2.000</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.470 3.200 2.000</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_cupboard_g">
+      <static>true</static>
+      <pose>-8.560 -0.300 1.0000 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.720 3.200 2.000</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.720 3.200 2.000</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_sofa_g">
+      <static>true</static>
+      <pose>-5.950 -0.975 0.4250 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.700 1.850 0.850</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.700 1.850 0.850</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_cb">
+      <static>true</static>
+      <pose>-5.875 0.625 1.0000 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.550 1.350 2.000</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.550 1.350 2.000</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_cupboard_t">
+      <static>true</static>
+      <pose>-11.750 3.110 1.0000 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>2.200 0.420 2.000</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>2.200 0.420 2.000</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_bed_b">
+      <static>true</static>
+      <pose>-11.625 4.900 0.2500 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>2.450 1.600 0.500</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>2.450 1.600 0.500</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_table_b">
+      <static>true</static>
+      <pose>-9.650 6.050 0.3750 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>1.000 0.500 0.750</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>1.000 0.500 0.750</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_swing">
+      <static>true</static>
+      <pose>-7.950 4.250 0.3000 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>1.100 1.500 0.600</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>1.100 1.500 0.600</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_sofa_back">
+      <static>true</static>
+      <pose>-3.800 6.025 0.4250 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>4.000 0.550 0.850</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>4.000 0.550 0.850</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_sofa_arm_l">
+      <static>true</static>
+      <pose>-5.450 5.500 0.4250 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.700 1.600 0.850</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.700 1.600 0.850</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_sofa_arm_r">
+      <static>true</static>
+      <pose>-2.150 5.000 0.4250 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.700 2.600 0.850</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.700 2.600 0.850</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_coffee_table">
+      <static>true</static>
+      <pose>-3.900 3.950 0.2250 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>1.200 0.900 0.450</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>1.200 0.900 0.450</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_entrance_cupboard">
+      <static>true</static>
+      <pose>-4.950 -0.850 1.0000 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.900 2.100 2.000</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.900 2.100 2.000</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_bench">
+      <static>true</static>
+      <pose>-2.200 -0.900 0.2250 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.800 1.600 0.450</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.800 1.600 0.450</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_counter">
+      <static>true</static>
+      <pose>-1.350 -0.725 0.5350 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.600 2.450 1.070</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.600 2.450 1.070</size></box></geometry>
+          <material><ambient>0.9 0.9 0.85 1</ambient><diffuse>0.9 0.9 0.85 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_fridge">
+      <static>true</static>
+      <pose>-1.300 0.925 0.8500 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.700 0.850 1.700</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.700 0.850 1.700</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_counter_2">
+      <static>true</static>
+      <pose>0.000 -1.650 0.5350 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>3.300 0.600 1.070</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>3.300 0.600 1.070</size></box></geometry>
+          <material><ambient>0.9 0.9 0.85 1</ambient><diffuse>0.9 0.9 0.85 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_counter_3">
+      <static>true</static>
+      <pose>1.350 -0.300 0.5350 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.600 3.300 1.070</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.600 3.300 1.070</size></box></geometry>
+          <material><ambient>0.9 0.9 0.85 1</ambient><diffuse>0.9 0.9 0.85 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_mandir">
+      <static>true</static>
+      <pose>2.600 -0.250 1.0000 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>1.800 3.500 2.000</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>1.800 3.500 2.000</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_dining_table">
+      <static>true</static>
+      <pose>0.050 4.150 0.3750 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>1.700 3.300 0.750</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>1.700 3.300 0.750</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_bed_c">
+      <static>true</static>
+      <pose>5.800 -0.975 0.2500 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>3.100 1.750 0.500</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>3.100 1.750 0.500</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_cupboard_t_2">
+      <static>true</static>
+      <pose>5.950 3.350 1.0000 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>3.000 0.500 2.000</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>3.000 0.500 2.000</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_bed_d">
+      <static>true</static>
+      <pose>6.200 4.725 0.2500 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>2.300 1.350 0.500</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>2.300 1.350 0.500</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="zippy_table_d">
+      <static>true</static>
+      <pose>7.025 5.925 0.3750 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.650 0.750 0.750</size></box></geometry></collision>
+        <visual name="visual"><geometry><box><size>0.650 0.750 0.750</size></box></geometry>
+          <material><ambient>0.55 0.4 0.3 1</ambient><diffuse>0.55 0.4 0.3 1</diffuse></material></visual>
+      </link>
+    </model>

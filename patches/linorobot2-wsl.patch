@@ -1,0 +1,13 @@
+diff --git a/linorobot2_gazebo/launch/gazebo.launch.py b/linorobot2_gazebo/launch/gazebo.launch.py
+index 9344df9..5ce5118 100644
+--- a/linorobot2_gazebo/launch/gazebo.launch.py
++++ b/linorobot2_gazebo/launch/gazebo.launch.py
+@@ -115,7 +115,7 @@ def generate_launch_description():
+             PythonLaunchDescriptionSource(gazebo_launch_path),
+             condition=IfCondition(LaunchConfiguration('gui')),
+             launch_arguments={
+-                'gz_args': [' -g']
++                'gz_args': [' -g --render-engine-gui ogre']
+             }.items()
+         ),
+ 
