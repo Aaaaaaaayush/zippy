@@ -1,0 +1,338 @@
+<?xml version="1.0"?>
+<!--
+  Zippy v0.4 - the digital body (Manual 0.4).
+  Simple shapes with real masses, so Gazebo's physics sees the real weight and centre of gravity.
+  All the numbers live in zippy_properties.urdf.xacro; this file only assembles them.
+  Sensors (LiDAR, depth camera, IMU) reuse linorobot2's ready-made macros.
+-->
+<robot name="zippy" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find zippy_description)/urdf/zippy_properties.urdf.xacro"/>
+  <xacro:include filename="$(find linorobot2_description)/urdf/sensors/plugins.urdf.xacro"/>
+  <xacro:include filename="$(find linorobot2_description)/urdf/sensors/imu.urdf.xacro"/>
+  <xacro:include filename="$(find linorobot2_description)/urdf/sensors/laser.urdf.xacro"/>
+  <xacro:include filename="$(find linorobot2_description)/urdf/sensors/depth_sensor.urdf.xacro"/>
+
+  <!-- ===================== colours ===================== -->
+  <material name="zippy_shell"><color rgba="0.93 0.93 0.90 1.0"/></material>
+  <material name="zippy_metal"><color rgba="0.62 0.64 0.67 1.0"/></material>
+  <material name="zippy_dark"><color rgba="0.15 0.15 0.17 1.0"/></material>
+  <material name="zippy_orange"><color rgba="0.95 0.50 0.15 1.0"/></material>
+  <material name="zippy_battery"><color rgba="0.20 0.45 0.85 1.0"/></material>
+  <material name="zippy_screen"><color rgba="0.05 0.05 0.08 1.0"/></material>
+  <material name="zippy_load"><color rgba="0.80 0.15 0.15 1.0"/></material>
+
+  <!-- ===================== inertia helpers ===================== -->
+  <xacro:macro name="cyl_inertia" params="m r h">
+    <inertia ixx="${m*(3*r*r + h*h)/12}" ixy="0" ixz="0"
+             iyy="${m*(3*r*r + h*h)/12}" iyz="0" izz="${m*r*r/2}"/>
+  </xacro:macro>
+  <xacro:macro name="box_inertia" params="m x y z">
+    <inertia ixx="${m*(y*y + z*z)/12}" ixy="0" ixz="0"
+             iyy="${m*(x*x + z*z)/12}" iyz="0" izz="${m*(x*x + y*y)/12}"/>
+  </xacro:macro>
+
+  <!-- heights used below, worked out once -->
+  <xacro:property name="base_z"   value="${plate_bottom_z + plate_thick/2}"/>   <!-- base_link sits in the plate -->
+  <xacro:property name="plate_top_z" value="${plate_bottom_z + plate_thick}"/>
+  <xacro:property name="column_bottom_z" value="${deck_bottom_z + plate_thick}"/>
+  <xacro:property name="tray_bottom_z"   value="${tray_top_z - tray_thick}"/>
+  <xacro:property name="column_len" value="${tray_bottom_z - column_bottom_z}"/>
+  <xacro:property name="battery_h" value="0.150"/>
+
+  <!-- ===================== base - floor plate ===================== -->
+  <link name="base_footprint"/>
+
+  <link name="base_link">
+    <visual>
+      <geometry><cylinder radius="${body_radius}" length="${plate_thick}"/></geometry>
+      <material name="zippy_metal"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="${body_radius}" length="${plate_thick}"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="${plate_mass}"/>
+      <xacro:cyl_inertia m="${plate_mass}" r="${body_radius}" h="${plate_thick}"/>
+    </inertial>
+  </link>
+
+  <joint name="base_to_footprint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 ${base_z}"/>
+  </joint>
+
+  <!-- ===================== lower shell + electronics ===================== -->
+  <xacro:property name="shell_h" value="${shell_top_z - plate_top_z}"/>
+  <link name="shell_link">
+    <visual>
+      <geometry><cylinder radius="${body_radius}" length="${shell_h}"/></geometry>
+      <material name="zippy_shell"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="${body_radius}" length="${shell_h}"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="${shell_mass}"/>
+      <xacro:cyl_inertia m="${shell_mass}" r="${body_radius}" h="${shell_h}"/>
+    </inertial>
+  </link>
+  <joint name="shell_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="shell_link"/>
+    <origin xyz="0 0 ${plate_top_z + shell_h/2 - base_z}"/>
+  </joint>
+
+  <!-- ===================== battery (inside the shell) ===================== -->
+  <link name="battery_link">
+    <visual>
+      <geometry><box size="${battery_size}"/></geometry>
+      <material name="zippy_battery"/>
+    </visual>
+    <inertial>
+      <mass value="${battery_mass}"/>
+      <xacro:box_inertia m="${battery_mass}" x="0.152" y="0.145" z="${battery_h}"/>
+    </inertial>
+  </link>
+  <joint name="battery_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="battery_link"/>
+    <origin xyz="0 0 ${plate_top_z + battery_h/2 - base_z}"/>
+  </joint>
+
+  <!-- ===================== drive wheels on springs ===================== -->
+  <xacro:macro name="drive_wheel" params="side y inboard">
+    <!-- swing-arm with the gear motor - slides up and down on the spring -->
+    <link name="${side}_drive_link">
+      <visual>
+        <origin xyz="0 ${inboard} 0" rpy="${pi/2} 0 0"/>
+        <geometry><cylinder radius="0.0185" length="0.10"/></geometry>
+        <material name="zippy_dark"/>
+      </visual>
+      <inertial>
+        <mass value="${motor_mass}"/>
+        <xacro:box_inertia m="${motor_mass}" x="0.05" y="0.12" z="0.05"/>
+      </inertial>
+    </link>
+    <joint name="${side}_suspension_joint" type="prismatic">
+      <parent link="base_link"/>
+      <child link="${side}_drive_link"/>
+      <origin xyz="0 ${y} ${wheel_radius - base_z}"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${-spring_down}" upper="${spring_up}" effort="1000" velocity="10"/>
+      <dynamics damping="${spring_damping}"/>
+    </joint>
+    <gazebo reference="${side}_suspension_joint">
+      <springStiffness>${spring_k}</springStiffness>
+      <springReference>${-spring_preload / spring_k}</springReference>
+    </gazebo>
+
+    <link name="${side}_wheel_link">
+      <visual>
+        <origin rpy="${pi/2} 0 0"/>
+        <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+        <material name="zippy_dark"/>
+      </visual>
+      <collision>
+        <origin rpy="${pi/2} 0 0"/>
+        <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+      </collision>
+      <inertial>
+        <origin rpy="${pi/2} 0 0"/>
+        <mass value="${wheel_mass}"/>
+        <xacro:cyl_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+      </inertial>
+    </link>
+    <joint name="${side}_wheel_joint" type="continuous">
+      <parent link="${side}_drive_link"/>
+      <child link="${side}_wheel_link"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="${wheel_torque}" velocity="${wheel_max_speed}"/>
+    </joint>
+    <gazebo reference="${side}_wheel_link">
+      <mu1>${wheel_mu}</mu1>
+      <mu2>${wheel_mu}</mu2>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:drive_wheel side="left"  y="${wheel_y}"  inboard="-0.065"/>
+  <xacro:drive_wheel side="right" y="${-wheel_y}" inboard="0.065"/>
+
+  <!-- ===================== casters (rigid, low friction like a swivel wheel) ===================== -->
+  <xacro:macro name="caster" params="side x">
+    <link name="${side}_caster_link">
+      <visual>
+        <geometry><sphere radius="${caster_radius}"/></geometry>
+        <material name="zippy_dark"/>
+      </visual>
+      <collision>
+        <geometry><sphere radius="${caster_radius}"/></geometry>
+      </collision>
+      <inertial>
+        <mass value="${caster_mass}"/>
+        <inertia ixx="${0.4*caster_mass*caster_radius*caster_radius}" ixy="0" ixz="0"
+                 iyy="${0.4*caster_mass*caster_radius*caster_radius}" iyz="0"
+                 izz="${0.4*caster_mass*caster_radius*caster_radius}"/>
+      </inertial>
+    </link>
+    <joint name="${side}_caster_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="${side}_caster_link"/>
+      <origin xyz="${x} 0 ${caster_radius - base_z}"/>
+    </joint>
+    <gazebo reference="${side}_caster_link">
+      <mu1>0.01</mu1>
+      <mu2>0.01</mu2>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:caster side="front" x="${caster_x}"/>
+  <xacro:caster side="rear"  x="${-caster_x}"/>
+
+  <!-- ===================== LiDAR, in the slot ===================== -->
+  <xacro:laser update_rate="10" ray_count="360" min_angle="-3.1416" max_angle="3.1416"
+               min_range="${lidar_min_range}" max_range="12.0" frame_id="laser" topic_name="scan">
+    <origin xyz="0 0 ${lidar_z - base_z}" rpy="0 0 0"/>
+  </xacro:laser>
+
+  <!-- ===================== top deck with its 4 slot posts ===================== -->
+  <xacro:macro name="post" params="a">
+    <visual>
+      <origin xyz="${post_ring*cos(a)} ${post_ring*sin(a)} ${-(deck_bottom_z - shell_top_z)/2 - plate_thick/2}"/>
+      <geometry><cylinder radius="${post_radius}" length="${deck_bottom_z - shell_top_z}"/></geometry>
+      <material name="zippy_metal"/>
+    </visual>
+  </xacro:macro>
+  <link name="deck_link">
+    <visual>
+      <geometry><cylinder radius="${body_radius}" length="${plate_thick}"/></geometry>
+      <material name="zippy_shell"/>
+    </visual>
+    <xacro:post a="${pi/4}"/>
+    <xacro:post a="${3*pi/4}"/>
+    <xacro:post a="${-pi/4}"/>
+    <xacro:post a="${-3*pi/4}"/>
+    <collision>
+      <geometry><cylinder radius="${body_radius}" length="${plate_thick}"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="${deck_mass}"/>
+      <xacro:cyl_inertia m="${deck_mass}" r="${body_radius}" h="${plate_thick}"/>
+    </inertial>
+  </link>
+  <joint name="deck_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="deck_link"/>
+    <origin xyz="0 0 ${deck_bottom_z + plate_thick/2 - base_z}"/>
+  </joint>
+
+  <!-- ===================== column ===================== -->
+  <link name="column_link">
+    <visual>
+      <geometry><box size="${column_side} ${column_side} ${column_len}"/></geometry>
+      <material name="zippy_metal"/>
+    </visual>
+    <collision>
+      <geometry><box size="${column_side} ${column_side} ${column_len}"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="${column_mass}"/>
+      <xacro:box_inertia m="${column_mass}" x="${column_side}" y="${column_side}" z="${column_len}"/>
+    </inertial>
+  </link>
+  <joint name="column_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="column_link"/>
+    <origin xyz="0 0 ${column_bottom_z + column_len/2 - base_z}"/>
+  </joint>
+
+  <!-- ===================== tray, level with the counter ===================== -->
+  <link name="tray_link">
+    <visual>
+      <geometry><cylinder radius="${tray_radius}" length="${tray_thick}"/></geometry>
+      <material name="zippy_orange"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="${tray_radius}" length="${tray_thick}"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="${tray_mass}"/>
+      <xacro:cyl_inertia m="${tray_mass}" r="${tray_radius}" h="${tray_thick}"/>
+    </inertial>
+  </link>
+  <joint name="tray_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="tray_link"/>
+    <origin xyz="0 0 ${tray_top_z - tray_thick/2 - base_z}"/>
+  </joint>
+
+  <!-- ===================== test load on the tray (fixed in place) ===================== -->
+  <link name="payload_link">
+    <visual>
+      <geometry><cylinder radius="0.10" length="0.10"/></geometry>
+      <material name="zippy_load"/>
+    </visual>
+    <inertial>
+      <mass value="${payload_mass}"/>
+      <xacro:cyl_inertia m="${payload_mass}" r="0.10" h="0.10"/>
+    </inertial>
+  </link>
+  <joint name="payload_joint" type="fixed">
+    <parent link="tray_link"/>
+    <child link="payload_link"/>
+    <origin xyz="0 0 ${tray_thick/2 + 0.05}"/>
+  </joint>
+
+  <!-- ===================== touchscreen on the front of the column ===================== -->
+  <link name="screen_link">
+    <visual>
+      <geometry><box size="${screen_size}"/></geometry>
+      <material name="zippy_screen"/>
+    </visual>
+    <inertial>
+      <mass value="${screen_mass}"/>
+      <xacro:box_inertia m="${screen_mass}" x="0.02" y="0.24" z="0.16"/>
+    </inertial>
+  </link>
+  <joint name="screen_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="screen_link"/>
+    <origin xyz="0.06 0 ${screen_z - base_z}" rpy="0 ${-screen_tilt} 0"/>
+  </joint>
+
+  <!-- ===================== sensors from linorobot2 ===================== -->
+  <xacro:imu/>
+  <xacro:depth_sensor>
+    <origin xyz="0.05 0 ${camera_z - base_z}" rpy="0 0 0"/>
+  </xacro:depth_sensor>
+
+  <!-- ===================== motors - Gazebo's differential drive ===================== -->
+  <gazebo>
+    <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+      <topic>cmd_vel</topic>
+      <child_frame_id>base_footprint</child_frame_id>
+      <odom_topic>odom/unfiltered</odom_topic>
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+      <wheel_separation>${2*wheel_y}</wheel_separation>
+      <wheel_radius>${wheel_radius}</wheel_radius>
+      <odom_publish_frequency>50</odom_publish_frequency>
+      <max_linear_velocity>${max_speed}</max_linear_velocity>
+      <min_linear_velocity>${-max_speed}</min_linear_velocity>
+      <max_angular_velocity>${max_turn}</max_angular_velocity>
+      <min_angular_velocity>${-max_turn}</min_angular_velocity>
+      <max_linear_acceleration>${max_accel}</max_linear_acceleration>
+      <min_linear_acceleration>${-max_accel}</min_linear_acceleration>
+      <max_angular_acceleration>2.0</max_angular_acceleration>
+      <min_angular_acceleration>-2.0</min_angular_acceleration>
+    </plugin>
+  </gazebo>
+  <gazebo>
+    <!-- no joint list - publishes all four moving joints, wheels and springs -->
+    <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+      <topic>joint_states</topic>
+      <update_rate>50</update_rate>
+    </plugin>
+  </gazebo>
+</robot>

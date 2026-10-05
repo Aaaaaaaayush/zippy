@@ -17,7 +17,7 @@ RES = 0.05            # metres per pixel (Nav2 default)
 MARGIN = 0.5          # unknown border around the flat
 OUTER_T = 0.25        # outer wall thickness
 INNER_T = 0.15        # inner wall thickness
-DOOR = 0.80           # "a little more than 2.5 ft"
+DOOR = 0.76           # "about 2.5 ft" (measured 5 Oct 2026)
 MAIN_DOOR = 1.00
 
 FREE, OCC, UNKNOWN = 254, 0, 205
@@ -90,8 +90,8 @@ FURNITURE = [
     ("Sofa G",           6.6, 7.3, 1.2, 3.05),
     ("C.B.",             6.75, 7.3, 3.05, 4.4),
     ("Cupboard T",       0.05, 2.25, 6.0, 6.42),
-    ("Bed B",            0.05, 2.5, 7.2, 8.8),
-    ("Table B",          2.75, 3.75, 8.9, 9.4),
+    ("Bed B",            1.16, 2.99, 7.40, 9.375),   # head on top wall, ~1 m (3.4 ft) gap each side
+    ("Table B",          3.05, 3.50, 8.95, 9.375),   # bedside table, right of the bed
     ("Swing",            4.4, 5.5, 6.6, 8.1),
     ("Sofa back",        7.1, 11.1, 8.85, 9.4),
     ("Sofa arm L",       7.1, 7.8, 7.8, 9.4),
@@ -119,7 +119,7 @@ CLOSED_ROOMS = [
 ]
 
 ROOM_LABELS = [
-    ("Bedroom A", 2.0, 3.9), ("Guest Room", 5.6, 2.6), ("Bedroom B", 3.0, 7.6),
+    ("Bedroom A", 2.0, 3.9), ("Guest Room", 5.6, 2.6), ("Bedroom B", 2.1, 6.95),
     ("Lobby", 3.2, 5.6), ("HALL", 6.0, 6.0), ("TV wall", 9.0, 4.9), ("Entrance", 9.3, 2.5),
     ("Kitchen", 12.9, 3.9), ("Mandir", 15.5, 2.3), ("Lobby", 15.5, 5.1),
     ("Passage", 16.85, 5.6), ("Bedroom C", 18.7, 3.7), ("Bedroom D", 17.2, 9.0),
@@ -127,17 +127,18 @@ ROOM_LABELS = [
 ]
 
 # ---------------------------------------------------------------- Gazebo extras
-# (0, 0) of the map / Gazebo world: the middle of the kitchen floor, where the
-# simulated robot is spawned. Move it to the dock spot once that is chosen.
-ORIGIN_AT = (12.9, 3.1)
+# (0, 0) of the map / Gazebo world = Zippy's dock, where the simulated robot spawns.
+# Dock: Bedroom B, bottom-left corner, left of the bed (chosen 5 Oct 2026).
+ORIGIN_AT = (0.40, 7.00)   # Zippy's dock: Bedroom B, bottom-left, back to the left wall, facing +x
 
-SILL_H = 0.005   # your note said 0.4-0.5 (mm or cm?) -> 5 mm, the safe side
+SILL_H = 0.01    # no sills in the flat; Zippy is designed to climb 0.5-1 cm, so test at 1 cm
+INCLUDE_SILLS = True   # off for the sample robot (its casters snag); back on in Manual 0.4 for Zippy
 SILLS = [        # (name, x0, x1, y0, y1)  doorway gap x wall thickness
-    ("bedroom_a",  2.5, 3.3, 4.425, 4.575),
-    ("guest_room", 4.8, 5.6, 4.425, 4.575),
-    ("bedroom_b",  3.0, 3.8, 6.425, 6.575),
-    ("kitchen",   12.4, 13.2, 4.425, 4.575),
-    ("bedroom_c", 16.45, 17.25, 4.375, 4.525),
+    ("bedroom_a",  2.5, 3.26, 4.425, 4.575),
+    ("guest_room", 4.8, 5.56, 4.425, 4.575),
+    ("bedroom_b",  3.0, 3.76, 6.425, 6.575),
+    ("kitchen",   12.4, 13.16, 4.425, 4.575),
+    ("bedroom_c", 16.45, 17.21, 4.375, 4.525),
     ("bedroom_d", 16.45, 17.25, 5.975, 6.125),
 ]
 
@@ -232,7 +233,7 @@ def box(name, x0, x1, y0, y1, hgt, rgb):
 
 
 blocks, used = [], {}
-for name, x0, x1, y0, y1 in SILLS:
+for name, x0, x1, y0, y1 in (SILLS if INCLUDE_SILLS else []):
     blocks.append(box(f"sill_{name}", x0, x1, y0, y1, SILL_H, "0.8 0.6 0.2"))
 for name, x0, x1, y0, y1 in FURNITURE:
     h = height_of(name)
@@ -246,7 +247,7 @@ for name, x0, x1, y0, y1 in FURNITURE:
     blocks.append(box(slug, x0, x1, y0, y1, h, rgb))
 
 with open("home_furniture.txt", "w") as f:
-    f.write("    <!-- Zippy: door sills + furniture at real heights (from make_zippy_map.py) -->\n")
+    f.write("    <!-- Zippy: furniture at real heights (from make_zippy_map.py) -->\n")
     f.write("".join(blocks))
 
 free_area = (img == FREE).sum() * RES * RES
@@ -279,13 +280,13 @@ try:
     ax.plot([8.8 - OX, 9.8 - OX], [-OY, -OY], color="tab:red", lw=4)
     ax.text(9.3 - OX, 0.2 - OY, "Main door (closed)", color="tab:red", ha="center", fontsize=7)
     ax.plot(0, 0, marker="*", color="tab:red", ms=16)
-    ax.text(0, -0.35, "(0, 0) robot start", color="tab:red", ha="center", fontsize=8)
+    ax.text(0, -0.35, "(0, 0) dock", color="tab:red", ha="center", fontsize=8)
     ax.set_xticks(np.arange(np.ceil(xmin - OX), xmax - OX, 1))
     ax.set_yticks(np.arange(np.ceil(ymin - OY), ymax - OY, 1))
     ax.grid(color="tab:blue", alpha=0.15)
     ax.set_xlabel("x (m) in Gazebo / RViz")
     ax.set_ylabel("y (m)")
-    ax.set_title(f"Zippy flat map v3 - green = doors, orange = furniture, grey = unknown, "
+    ax.set_title(f"Zippy flat map v4 - green = doors, orange = furniture, grey = unknown, "
                  f"{free_area:.0f} m² free floor")
     fig.tight_layout()
     fig.savefig("home_preview.png", dpi=110)

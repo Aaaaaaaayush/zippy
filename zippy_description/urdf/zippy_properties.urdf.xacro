@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!--
+  Zippy's numbers, v0.4 (Manual 0.4, 5 Oct 2026).
+  Every length is in METRES, every mass in KILOGRAMS, every torque in NEWTON-METRES.
+  Heights are measured from the floor. x = forward, y = left, z = up.
+  Change a number here, rebuild nothing (symlink install), and relaunch Gazebo.
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ===== Footprint - a round robot, 42 cm across, so it turns on the spot ===== -->
+  <xacro:property name="body_radius"     value="0.21"/>   <!-- 42 cm - 17 cm spare each side in a 76 cm door -->
+
+  <!-- ===== Floor plate (laser-cut 4 mm aluminium) ===== -->
+  <xacro:property name="plate_bottom_z"  value="0.100"/>  <!-- = mounting height of the 75 mm casters -->
+  <xacro:property name="plate_thick"     value="0.006"/>
+  <xacro:property name="plate_mass"      value="1.5"/>
+
+  <!-- ===== Lower shell - wall of the base + all electronics inside it ===== -->
+  <xacro:property name="shell_top_z"     value="0.260"/>
+  <xacro:property name="shell_mass"      value="2.5"/>    <!-- shell 1.0 + Jetson, driver, ESP32, DC-DC, fuses, wires 1.5 -->
+
+  <!-- ===== Battery - 24 V LiFePO4, ~600 Wh, standing on the plate ===== -->
+  <xacro:property name="battery_size"    value="0.152 0.145 0.150"/>
+  <xacro:property name="battery_mass"    value="5.3"/>
+
+  <!-- ===== Drive - two 150 mm wheels on sprung swing-arms (like a Roomba / Kobuki) ===== -->
+  <xacro:property name="wheel_radius"    value="0.075"/>
+  <xacro:property name="wheel_width"     value="0.040"/>
+  <xacro:property name="wheel_y"         value="0.165"/>  <!-- wheel separation 0.33 m -->
+  <xacro:property name="wheel_mass"      value="0.40"/>
+  <xacro:property name="wheel_mu"        value="0.7"/>    <!-- rubber on tile/marble, dry -->
+  <xacro:property name="motor_mass"      value="0.90"/>   <!-- gear motor + swing-arm bracket, moves with the spring -->
+  <xacro:property name="wheel_torque"    value="3.0"/>    <!-- most the motor may push, N m (about 30 kg cm) -->
+  <xacro:property name="wheel_max_speed" value="10.5"/>   <!-- rad/s = 100 rpm = 0.79 m/s -->
+
+  <!-- Suspension spring on each drive wheel -->
+  <xacro:property name="spring_k"        value="3000"/>   <!-- 3 N per mm -->
+  <xacro:property name="spring_preload"  value="55"/>     <!-- N pressing each wheel down at ride height -->
+  <xacro:property name="spring_damping"  value="60"/>
+  <xacro:property name="spring_down"     value="0.025"/>  <!-- travel below ride height -->
+  <xacro:property name="spring_up"       value="0.015"/>  <!-- travel above ride height -->
+
+  <!-- ===== Casters - two 75 mm swivel casters, front and back, rigid ===== -->
+  <xacro:property name="caster_radius"   value="0.0375"/>
+  <xacro:property name="caster_x"        value="0.145"/>
+  <xacro:property name="caster_mass"     value="0.25"/>
+
+  <!-- ===== LiDAR in a 360 degree slot between the shell and the top deck ===== -->
+  <xacro:property name="lidar_z"         value="0.310"/>  <!-- height of the laser beam -->
+  <xacro:property name="lidar_min_range" value="0.25"/>   <!-- ignores the 4 slot posts at 19.5 cm -->
+  <xacro:property name="deck_bottom_z"   value="0.340"/>
+  <xacro:property name="deck_mass"       value="1.0"/>    <!-- top deck + 4 posts -->
+  <xacro:property name="post_radius"     value="0.008"/>
+  <xacro:property name="post_ring"       value="0.195"/>
+
+  <!-- ===== Column (40 x 40 mm aluminium extrusion), tray, screen ===== -->
+  <xacro:property name="column_side"     value="0.04"/>
+  <xacro:property name="column_mass"     value="0.75"/>
+  <xacro:property name="tray_top_z"      value="0.80"/>   <!-- Zippy is at most 80 cm tall (Aayush, 5 Oct 2026) -->
+  <xacro:property name="tray_radius"     value="0.20"/>
+  <xacro:property name="tray_thick"      value="0.02"/>
+  <xacro:property name="tray_mass"       value="1.2"/>
+  <xacro:property name="screen_size"     value="0.02 0.24 0.16"/>  <!-- 10 inch touchscreen -->
+  <xacro:property name="screen_mass"     value="0.8"/>
+  <xacro:property name="screen_z"        value="0.68"/>
+  <xacro:property name="screen_tilt"     value="0.35"/>   <!-- 20 degrees, facing up towards a standing person -->
+  <xacro:property name="camera_z"        value="0.45"/>
+
+  <!-- ===== Test load on the tray - a 10 cm tall pot, 20 cm across ===== -->
+  <xacro:property name="payload_mass"    value="8.0"/>    <!-- 8 kg = the Phase 0 design load. 0.001 = empty tray -->
+
+  <!-- ===== Speed limits, as the motor driver will enforce them ===== -->
+  <xacro:property name="max_speed"       value="0.5"/>    <!-- m/s -->
+  <xacro:property name="max_turn"        value="1.5"/>    <!-- rad/s -->
+  <xacro:property name="max_accel"       value="0.8"/>    <!-- m/s2 - hardest start or stop. Loaded Zippy starts to rock at ~1.2 and tips at ~2.7 -->
+</robot>
