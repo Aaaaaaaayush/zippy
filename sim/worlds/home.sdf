@@ -106,60 +106,6 @@
     
     <!-- Zippy: furniture at real heights (from make_zippy_map.py) -->
     <!-- Zippy: furniture at real heights (from make_zippy_map.py) -->
-    <model name="zippy_sill_bedroom_a">
-      <static>true</static>
-      <pose>2.480 -2.500 0.0050 0 0 0</pose>
-      <link name="link">
-        <collision name="collision"><geometry><box><size>0.760 0.150 0.010</size></box></geometry></collision>
-        <visual name="visual"><geometry><box><size>0.760 0.150 0.010</size></box></geometry>
-          <material><ambient>0.8 0.6 0.2 1</ambient><diffuse>0.8 0.6 0.2 1</diffuse></material></visual>
-      </link>
-    </model>
-    <model name="zippy_sill_guest_room">
-      <static>true</static>
-      <pose>4.780 -2.500 0.0050 0 0 0</pose>
-      <link name="link">
-        <collision name="collision"><geometry><box><size>0.760 0.150 0.010</size></box></geometry></collision>
-        <visual name="visual"><geometry><box><size>0.760 0.150 0.010</size></box></geometry>
-          <material><ambient>0.8 0.6 0.2 1</ambient><diffuse>0.8 0.6 0.2 1</diffuse></material></visual>
-      </link>
-    </model>
-    <model name="zippy_sill_bedroom_b">
-      <static>true</static>
-      <pose>2.980 -0.500 0.0050 0 0 0</pose>
-      <link name="link">
-        <collision name="collision"><geometry><box><size>0.760 0.150 0.010</size></box></geometry></collision>
-        <visual name="visual"><geometry><box><size>0.760 0.150 0.010</size></box></geometry>
-          <material><ambient>0.8 0.6 0.2 1</ambient><diffuse>0.8 0.6 0.2 1</diffuse></material></visual>
-      </link>
-    </model>
-    <model name="zippy_sill_kitchen">
-      <static>true</static>
-      <pose>12.380 -2.500 0.0050 0 0 0</pose>
-      <link name="link">
-        <collision name="collision"><geometry><box><size>0.760 0.150 0.010</size></box></geometry></collision>
-        <visual name="visual"><geometry><box><size>0.760 0.150 0.010</size></box></geometry>
-          <material><ambient>0.8 0.6 0.2 1</ambient><diffuse>0.8 0.6 0.2 1</diffuse></material></visual>
-      </link>
-    </model>
-    <model name="zippy_sill_bedroom_c">
-      <static>true</static>
-      <pose>16.430 -2.550 0.0050 0 0 0</pose>
-      <link name="link">
-        <collision name="collision"><geometry><box><size>0.760 0.150 0.010</size></box></geometry></collision>
-        <visual name="visual"><geometry><box><size>0.760 0.150 0.010</size></box></geometry>
-          <material><ambient>0.8 0.6 0.2 1</ambient><diffuse>0.8 0.6 0.2 1</diffuse></material></visual>
-      </link>
-    </model>
-    <model name="zippy_sill_bedroom_d">
-      <static>true</static>
-      <pose>16.450 -0.950 0.0050 0 0 0</pose>
-      <link name="link">
-        <collision name="collision"><geometry><box><size>0.800 0.150 0.010</size></box></geometry></collision>
-        <visual name="visual"><geometry><box><size>0.800 0.150 0.010</size></box></geometry>
-          <material><ambient>0.8 0.6 0.2 1</ambient><diffuse>0.8 0.6 0.2 1</diffuse></material></visual>
-      </link>
-    </model>
     <model name="zippy_bed_a">
       <static>true</static>
       <pose>1.300 -4.725 0.2500 0 0 0</pose>

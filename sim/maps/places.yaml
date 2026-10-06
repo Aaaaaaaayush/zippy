@@ -1,0 +1,10 @@
+# Zippy's named places in map coordinates: metres, yaw in radians.
+# Made by make_zippy_map.py; (0, 0) is the map origin. Edit PLACES there, not here.
+places:
+  dock: {x: 2.98, y: 0.50, yaw: -1.5708}
+  kitchen: {x: 12.50, y: -4.00, yaw: -1.5708}
+  sofa: {x: 8.60, y: 1.15, yaw: 1.5708}
+  bedroom_a: {x: 1.40, y: -3.05, yaw: 3.1416}
+  guest_room: {x: 5.20, y: -4.20, yaw: -1.5708}
+  bedroom_c: {x: 18.30, y: -3.30, yaw: 0.0000}
+  bedroom_d: {x: 16.75, y: 1.00, yaw: 1.5708}

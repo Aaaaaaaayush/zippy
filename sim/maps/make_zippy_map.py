@@ -5,6 +5,9 @@ Output: home.pgm + home.yaml           navigation map (walls + furniture)
         home_walls.pgm + home_walls.yaml  walls only, for linorobot2's world_creator
         home_furniture.txt                door sills + furniture boxes to paste into home.sdf
         home_preview.png                  labelled picture in Gazebo/RViz coordinates
+        keepout_mask.pgm + .yaml          Nav2 keep-out zones        (v5, Manual 0.5)
+        speed_mask.pgm + .yaml            Nav2 slow zones            (v5, Manual 0.5)
+        places.yaml                       Zippy's named places       (v5, Manual 0.5)
 
 Frame (looking at the sketch with the text readable):
   X  -> along the long side of the flat (left = Bedroom A / B end, right = Bedroom C / D end)
@@ -119,20 +122,20 @@ CLOSED_ROOMS = [
 ]
 
 ROOM_LABELS = [
-    ("Bedroom A", 2.0, 3.9), ("Guest Room", 5.6, 2.6), ("Bedroom B", 2.1, 6.95),
+    ("Bedroom A", 1.6, 4.25), ("Guest Room", 5.5, 1.55), ("Bedroom B", 2.1, 6.95),
     ("Lobby", 3.2, 5.6), ("HALL", 6.0, 6.0), ("TV wall", 9.0, 4.9), ("Entrance", 9.3, 2.5),
     ("Kitchen", 12.9, 3.9), ("Mandir", 15.5, 2.3), ("Lobby", 15.5, 5.1),
-    ("Passage", 16.85, 5.6), ("Bedroom C", 18.7, 3.7), ("Bedroom D", 17.2, 9.0),
+    ("Passage", 16.85, 5.6), ("Bedroom C", 18.7, 4.1), ("Bedroom D", 17.2, 9.0),
     ("Toilets", 1.15, 5.2), ("Toilets", 18.85, 5.2),
 ]
 
 # ---------------------------------------------------------------- Gazebo extras
-# (0, 0) of the map / Gazebo world = Zippy's dock, where the simulated robot spawns.
-# Dock: Bedroom B, bottom-left corner, left of the bed (chosen 5 Oct 2026).
-ORIGIN_AT = (0.40, 7.00)   # Zippy's dock: Bedroom B, bottom-left, back to the left wall, facing +x
+# (0, 0) of the map / Gazebo world. It was Zippy's first dock (Manual 0.4); it stays the map origin
+# so the world and walls don't change. The dock itself moved in Manual 0.5 - see "dock" in PLACES.
+ORIGIN_AT = (0.40, 7.00)   # map origin: Bedroom B, bottom-left, near the left wall
 
 SILL_H = 0.01    # no sills in the flat; Zippy is designed to climb 0.5-1 cm, so test at 1 cm
-INCLUDE_SILLS = True   # off for the sample robot (its casters snag); back on in Manual 0.4 for Zippy
+INCLUDE_SILLS = False   # off from 6 Oct 2026 - back with the real robot
 SILLS = [        # (name, x0, x1, y0, y1)  doorway gap x wall thickness
     ("bedroom_a",  2.5, 3.26, 4.425, 4.575),
     ("guest_room", 4.8, 5.56, 4.425, 4.575),
@@ -140,6 +143,27 @@ SILLS = [        # (name, x0, x1, y0, y1)  doorway gap x wall thickness
     ("kitchen",   12.4, 13.16, 4.425, 4.575),
     ("bedroom_c", 16.45, 17.21, 4.375, 4.525),
     ("bedroom_d", 16.45, 17.25, 5.975, 6.125),
+]
+
+# ---------------------------------------------------------------- Nav2 zones and places (v5, Manual 0.5)
+KEEPOUT = [  # (name, x0, x1, y0, y1)   Zippy never plans a path through these
+    ("Toilets",   0.0, 2.3, 4.5, 5.95),    # top toilet block, even when a door is left open
+    ("Toilets",  17.3, 20.4, 4.45, 6.15),  # bottom toilet block
+    ("Mandir",   14.6, 16.4, 1.1, 4.6),
+    ("Swing",     4.1, 5.8, 6.4, 8.4),     # the swing plus about 30 cm all round
+    ("Main door", 8.6, 10.0, 0.0, 1.3),    # keep the way in and out clear
+]
+SLOW = [     # (name, x0, x1, y0, y1, percent)   percent of Zippy's normal speed
+    ("Kitchen", 11.2, 14.6, 1.1, 4.5, 60),
+]
+PLACES = [   # (name, x, y, yaw in degrees)   yaw 0 = facing right on the preview
+    ("dock",       3.38, 7.50,  -90),      # right of the bed, facing the Bedroom B door 1 m ahead (5 Oct 2026)
+    ("kitchen",    12.9, 3.0,   -90),      # middle of the kitchen, facing the long counter
+    ("sofa",       9.0,  8.15,   90),      # inside the sofa, behind the coffee table
+    ("bedroom_a",  1.8,  3.95,  180),
+    ("guest_room", 5.6,  2.8,   -90),
+    ("bedroom_c",  18.7, 3.7,     0),
+    ("bedroom_d",  17.15, 8.0,   90),
 ]
 
 # heights (m) of the furniture boxes in Gazebo. "wall" = built into the walls map.
@@ -250,9 +274,43 @@ with open("home_furniture.txt", "w") as f:
     f.write("    <!-- Zippy: furniture at real heights (from make_zippy_map.py) -->\n")
     f.write("".join(blocks))
 
+# ---------------------------------------------------------------- Nav2 masks and places (v5)
+def zone_mask(zones, pixel_of):
+    g = np.full((H, W), 255, dtype=np.uint8)            # white = no rule here
+    for z in zones:
+        x0, x1, y0, y1 = z[1:5]
+        g[py(y0):py(y1), px(x0):px(x1)] = pixel_of(z)
+    return np.flipud(g)
+
+
+def save_mask(img_, stem, mode, occ, free):
+    with open(f"{stem}.pgm", "wb") as f:
+        f.write(f"P5\n# Zippy {stem}, {RES} m/px\n{W} {H}\n255\n".encode())
+        f.write(img_.tobytes())
+    ox, oy = round(xmin - ORIGIN_AT[0], 3), round(ymin - ORIGIN_AT[1], 3)
+    with open(f"{stem}.yaml", "w") as f:
+        f.write(f"image: {stem}.pgm\nmode: {mode}\nresolution: {RES}\n"
+                f"origin: [{ox}, {oy}, 0.0]\nnegate: 0\n"
+                f"occupied_thresh: {occ}\nfree_thresh: {free}\n")
+
+
+# keep-out: black = forbidden
+save_mask(zone_mask(KEEPOUT, lambda z: 0), "keepout_mask", "trinary", 0.65, 0.25)
+# speed: grey level p gives a mask value of (1 - p/255) * 100 = percent of normal speed
+save_mask(zone_mask(SLOW, lambda z: int(round(255 * (1 - z[5] / 100)))), "speed_mask", "scale", 1.0, 0.0)
+
+with open("places.yaml", "w") as f:
+    f.write("# Zippy's named places in map coordinates: metres, yaw in radians.\n"
+            "# Made by make_zippy_map.py; (0, 0) is the map origin. Edit PLACES there, not here.\n"
+            "places:\n")
+    for name, x, y, yaw in PLACES:
+        f.write(f"  {name}: {{x: {x - ORIGIN_AT[0]:.2f}, y: {y - ORIGIN_AT[1]:.2f}, "
+                f"yaw: {np.radians(yaw):.4f}}}\n")
+
 free_area = (img == FREE).sum() * RES * RES
 print(f"map {W}x{H} px = {W*RES:.1f} x {H*RES:.1f} m, free floor {free_area:.1f} m2, "
-      f"{len(blocks)} boxes in home_furniture.txt")
+      f"{len(blocks)} boxes in home_furniture.txt, {len(KEEPOUT)} keep-out zones, "
+      f"{len(SLOW)} slow zone, {len(PLACES)} places")
 
 # ================================================================ preview (Gazebo / RViz coordinates)
 try:
@@ -274,19 +332,39 @@ try:
     for name, x0, x1, y0, y1 in FURNITURE:
         ax.text((x0 + x1) / 2 - OX, (y0 + y1) / 2 - OY, name, color="tab:orange", ha="center",
                 va="center", fontsize=6.5, rotation=90 if (y1 - y0) > 1.8 * (x1 - x0) else 0)
+    from matplotlib.patches import Rectangle
+    for name, x0, x1, y0, y1 in KEEPOUT:
+        ax.add_patch(Rectangle((x0 - OX, y0 - OY), x1 - x0, y1 - y0, facecolor="tab:red", alpha=0.25,
+                               edgecolor="tab:red", hatch="//"))
+        ax.text((x0 + x1) / 2 - OX, y0 + 0.12 - OY, f"keep-out: {name}", color="darkred",
+                ha="center", va="bottom", fontsize=7, zorder=4,
+                bbox=dict(facecolor="white", alpha=0.7, edgecolor="none", pad=0.5))
+    for name, x0, x1, y0, y1, pct in SLOW:
+        ax.add_patch(Rectangle((x0 - OX, y0 - OY), x1 - x0, y1 - y0, facecolor="gold", alpha=0.25,
+                               edgecolor="goldenrod"))
+        ax.text(x0 + 0.1 - OX, y0 + 0.15 - OY, f"slow zone {pct}%", color="darkgoldenrod", fontsize=7)
     for name, x, y in ROOM_LABELS:
         ax.text(x - OX, y - OY, name, color="tab:blue", ha="center", va="center", fontsize=11,
                 weight="bold", bbox=dict(facecolor="white", alpha=0.8, edgecolor="none", pad=1))
+    for name, x, y, yaw in PLACES:   # drawn after the room names so nothing hides them
+        ax.plot(x - OX, y - OY, marker="o", color="tab:purple", ms=7, zorder=6)
+        ax.annotate("", xy=(x - OX + 0.45 * np.cos(np.radians(yaw)), y - OY + 0.45 * np.sin(np.radians(yaw))),
+                    xytext=(x - OX, y - OY), arrowprops=dict(arrowstyle="->", color="tab:purple", lw=1.5),
+                    zorder=6)
+        if True:
+            ax.text(x - OX + 0.15, y - OY - 0.12, name, color="tab:purple", ha="left", va="top",
+                    fontsize=8, weight="bold", zorder=6,
+                    bbox=dict(facecolor="white", alpha=0.7, edgecolor="none", pad=0.5))
     ax.plot([8.8 - OX, 9.8 - OX], [-OY, -OY], color="tab:red", lw=4)
-    ax.text(9.3 - OX, 0.2 - OY, "Main door (closed)", color="tab:red", ha="center", fontsize=7)
+    ax.text(9.3 - OX, -0.3 - OY, "Main door (closed)", color="tab:red", ha="center", fontsize=7)
     ax.plot(0, 0, marker="*", color="tab:red", ms=16)
-    ax.text(0, -0.35, "(0, 0) dock", color="tab:red", ha="center", fontsize=8)
+    ax.text(0, -0.35, "(0, 0) map origin", color="tab:red", ha="center", fontsize=8)
     ax.set_xticks(np.arange(np.ceil(xmin - OX), xmax - OX, 1))
     ax.set_yticks(np.arange(np.ceil(ymin - OY), ymax - OY, 1))
     ax.grid(color="tab:blue", alpha=0.15)
     ax.set_xlabel("x (m) in Gazebo / RViz")
     ax.set_ylabel("y (m)")
-    ax.set_title(f"Zippy flat map v4 - green = doors, orange = furniture, grey = unknown, "
+    ax.set_title(f"Zippy flat map v5 - green = doors, orange = furniture, red = keep-out, yellow = slow, purple = places, "
                  f"{free_area:.0f} m² free floor")
     fig.tight_layout()
     fig.savefig("home_preview.png", dpi=110)

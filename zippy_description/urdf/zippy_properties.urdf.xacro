@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  Zippy's numbers, v0.4 (Manual 0.4, 5 Oct 2026).
+  Zippy's numbers, v0.5 (Manual 0.5, 5 Oct 2026).
   Every length is in METRES, every mass in KILOGRAMS, every torque in NEWTON-METRES.
   Heights are measured from the floor. x = forward, y = left, z = up.
   Change a number here, rebuild nothing (symlink install), and relaunch Gazebo.
@@ -12,7 +12,7 @@
 
   <!-- ===== Floor plate (laser-cut 4 mm aluminium) ===== -->
   <xacro:property name="plate_bottom_z"  value="0.100"/>  <!-- = mounting height of the 75 mm casters -->
-  <xacro:property name="plate_thick"     value="0.006"/>
+  <xacro:property name="plate_thick"     value="0.004"/>
   <xacro:property name="plate_mass"      value="1.5"/>
 
   <!-- ===== Lower shell - wall of the base + all electronics inside it ===== -->
@@ -27,6 +27,7 @@
   <xacro:property name="wheel_radius"    value="0.075"/>
   <xacro:property name="wheel_width"     value="0.040"/>
   <xacro:property name="wheel_y"         value="0.165"/>  <!-- wheel separation 0.33 m -->
+  <xacro:property name="wheel_grip_track" value="0.33"/>  <!-- where the tyres actually grip, measured 5 Oct 2026 - Zippy turned 195 deg but counted 219 with 0.33 -->
   <xacro:property name="wheel_mass"      value="0.40"/>
   <xacro:property name="wheel_mu"        value="0.7"/>    <!-- rubber on tile/marble, dry -->
   <xacro:property name="motor_mass"      value="0.90"/>   <!-- gear motor + swing-arm bracket, moves with the spring -->
@@ -34,9 +35,9 @@
   <xacro:property name="wheel_max_speed" value="10.5"/>   <!-- rad/s = 100 rpm = 0.79 m/s -->
 
   <!-- Suspension spring on each drive wheel -->
-  <xacro:property name="spring_k"        value="3000"/>   <!-- 3 N per mm -->
+  <xacro:property name="spring_k"        value="8000"/>   <!-- 8 N per mm - stiff sideways (6 Oct 2026); was 3 for sills -->
   <xacro:property name="spring_preload"  value="55"/>     <!-- N pressing each wheel down at ride height -->
-  <xacro:property name="spring_damping"  value="60"/>
+  <xacro:property name="spring_damping"  value="120"/>
   <xacro:property name="spring_down"     value="0.025"/>  <!-- travel below ride height -->
   <xacro:property name="spring_up"       value="0.015"/>  <!-- travel above ride height -->
 

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zippy</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">Zippy</div>
+    <div id="pretend" class="badge" hidden>PRETEND</div>
+    <div class="spacer"></div>
+    <div id="state" class="pill">connecting</div>
+  </header>
+
+  <main>
+    <section class="status" id="status-card">
+      <p id="message" class="message">Connecting to Zippy...</p>
+      <p id="detail" class="detail"></p>
+      <p id="queue" class="detail"></p>
+    </section>
+
+    <section>
+      <h2>Send Zippy to</h2>
+      <div id="places" class="places"></div>
+    </section>
+  </main>
+
+  <footer>
+    <button id="done" class="action done" disabled>Done</button>
+    <button id="home" class="action home">Go home</button>
+    <button id="stop" class="action stop">Stop</button>
+  </footer>
+
+  <div id="offline" class="offline" hidden>Lost contact with Zippy's brain. Reconnecting...</div>
+  <script src="app.js"></script>
+</body>
+</html>
